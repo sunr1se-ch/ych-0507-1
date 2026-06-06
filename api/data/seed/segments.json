@@ -1,0 +1,74 @@
+[
+  {
+    "segmentId": "GL-A-001",
+    "corridor": "东线廊道A",
+    "length": 120,
+    "upstreamNode": "J-A-01"
+  },
+  {
+    "segmentId": "GL-A-002",
+    "corridor": "东线廊道A",
+    "length": 150,
+    "upstreamNode": "J-A-02"
+  },
+  {
+    "segmentId": "GL-A-003",
+    "corridor": "东线廊道A",
+    "length": 180,
+    "upstreamNode": "J-A-03"
+  },
+  {
+    "segmentId": "GL-A-004",
+    "corridor": "东线廊道A",
+    "length": 140,
+    "upstreamNode": "J-A-04"
+  },
+  {
+    "segmentId": "GL-A-005",
+    "corridor": "东线廊道A",
+    "length": 160,
+    "upstreamNode": "J-A-05"
+  },
+  {
+    "segmentId": "GL-B-001",
+    "corridor": "西线廊道B",
+    "length": 200,
+    "upstreamNode": "J-B-01"
+  },
+  {
+    "segmentId": "GL-B-002",
+    "corridor": "西线廊道B",
+    "length": 170,
+    "upstreamNode": "J-B-02"
+  },
+  {
+    "segmentId": "GL-B-003",
+    "corridor": "西线廊道B",
+    "length": 190,
+    "upstreamNode": "J-B-03"
+  },
+  {
+    "segmentId": "GL-B-004",
+    "corridor": "西线廊道B",
+    "length": 160,
+    "upstreamNode": "J-B-04"
+  },
+  {
+    "segmentId": "GL-C-001",
+    "corridor": "南线廊道C",
+    "length": 130,
+    "upstreamNode": "J-C-01"
+  },
+  {
+    "segmentId": "GL-C-002",
+    "corridor": "南线廊道C",
+    "length": 150,
+    "upstreamNode": "J-C-02"
+  },
+  {
+    "segmentId": "GL-C-003",
+    "corridor": "南线廊道C",
+    "length": 140,
+    "upstreamNode": "J-C-03"
+  }
+]

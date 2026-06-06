@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  pipe-leak-dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pipe-leak-dashboard
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    volumes:
+      - ./api/data:/app/api/data
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/api/dashboard/corridors"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s

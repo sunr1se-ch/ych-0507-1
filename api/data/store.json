@@ -1,0 +1,439 @@
+{
+  "segments": [
+    {
+      "segmentId": "GL-A-001",
+      "corridor": "东线廊道A",
+      "length": 120,
+      "upstreamNode": "J-A-01"
+    },
+    {
+      "segmentId": "GL-A-002",
+      "corridor": "东线廊道A",
+      "length": 150,
+      "upstreamNode": "J-A-02"
+    },
+    {
+      "segmentId": "GL-A-003",
+      "corridor": "东线廊道A",
+      "length": 180,
+      "upstreamNode": "J-A-03"
+    },
+    {
+      "segmentId": "GL-A-004",
+      "corridor": "东线廊道A",
+      "length": 140,
+      "upstreamNode": "J-A-04"
+    },
+    {
+      "segmentId": "GL-A-005",
+      "corridor": "东线廊道A",
+      "length": 160,
+      "upstreamNode": "J-A-05"
+    },
+    {
+      "segmentId": "GL-B-001",
+      "corridor": "西线廊道B",
+      "length": 200,
+      "upstreamNode": "J-B-01"
+    },
+    {
+      "segmentId": "GL-B-002",
+      "corridor": "西线廊道B",
+      "length": 170,
+      "upstreamNode": "J-B-02"
+    },
+    {
+      "segmentId": "GL-B-003",
+      "corridor": "西线廊道B",
+      "length": 190,
+      "upstreamNode": "J-B-03"
+    },
+    {
+      "segmentId": "GL-B-004",
+      "corridor": "西线廊道B",
+      "length": 160,
+      "upstreamNode": "J-B-04"
+    },
+    {
+      "segmentId": "GL-C-001",
+      "corridor": "南线廊道C",
+      "length": 130,
+      "upstreamNode": "J-C-01"
+    },
+    {
+      "segmentId": "GL-C-002",
+      "corridor": "南线廊道C",
+      "length": 150,
+      "upstreamNode": "J-C-02"
+    },
+    {
+      "segmentId": "GL-C-003",
+      "corridor": "南线廊道C",
+      "length": 140,
+      "upstreamNode": "J-C-03"
+    }
+  ],
+  "samples": [
+    {
+      "segmentId": "GL-A-001",
+      "sampleTime": "2025-01-05",
+      "conductivity": 120,
+      "flow": 35
+    },
+    {
+      "segmentId": "GL-A-001",
+      "sampleTime": "2025-01-15",
+      "conductivity": 135,
+      "flow": 42
+    },
+    {
+      "segmentId": "GL-A-001",
+      "sampleTime": "2025-01-25",
+      "conductivity": 128,
+      "flow": 38
+    },
+    {
+      "segmentId": "GL-A-001",
+      "sampleTime": "2025-02-05",
+      "conductivity": 150,
+      "flow": 48
+    },
+    {
+      "segmentId": "GL-A-001",
+      "sampleTime": "2025-02-15",
+      "conductivity": 168,
+      "flow": 55
+    },
+    {
+      "segmentId": "GL-A-002",
+      "sampleTime": "2025-01-05",
+      "conductivity": 95,
+      "flow": 28
+    },
+    {
+      "segmentId": "GL-A-002",
+      "sampleTime": "2025-01-15",
+      "conductivity": 98,
+      "flow": 30
+    },
+    {
+      "segmentId": "GL-A-002",
+      "sampleTime": "2025-01-25",
+      "conductivity": 102,
+      "flow": 33
+    },
+    {
+      "segmentId": "GL-A-002",
+      "sampleTime": "2025-02-05",
+      "conductivity": 110,
+      "flow": 36
+    },
+    {
+      "segmentId": "GL-A-002",
+      "sampleTime": "2025-02-15",
+      "conductivity": 108,
+      "flow": 34
+    },
+    {
+      "segmentId": "GL-A-003",
+      "sampleTime": "2025-01-05",
+      "conductivity": 180,
+      "flow": 52
+    },
+    {
+      "segmentId": "GL-A-003",
+      "sampleTime": "2025-01-15",
+      "conductivity": 210,
+      "flow": 65
+    },
+    {
+      "segmentId": "GL-A-003",
+      "sampleTime": "2025-01-25",
+      "conductivity": 245,
+      "flow": 78
+    },
+    {
+      "segmentId": "GL-A-003",
+      "sampleTime": "2025-02-05",
+      "conductivity": 230,
+      "flow": 72
+    },
+    {
+      "segmentId": "GL-A-003",
+      "sampleTime": "2025-02-15",
+      "conductivity": 260,
+      "flow": 85
+    },
+    {
+      "segmentId": "GL-A-004",
+      "sampleTime": "2025-01-05",
+      "conductivity": 85,
+      "flow": 25
+    },
+    {
+      "segmentId": "GL-A-004",
+      "sampleTime": "2025-01-15",
+      "conductivity": 88,
+      "flow": 26
+    },
+    {
+      "segmentId": "GL-A-004",
+      "sampleTime": "2025-01-25",
+      "conductivity": 92,
+      "flow": 28
+    },
+    {
+      "segmentId": "GL-A-004",
+      "sampleTime": "2025-02-05",
+      "conductivity": 90,
+      "flow": 27
+    },
+    {
+      "segmentId": "GL-A-004",
+      "sampleTime": "2025-02-15",
+      "conductivity": 95,
+      "flow": 30
+    },
+    {
+      "segmentId": "GL-A-005",
+      "sampleTime": "2025-01-05",
+      "conductivity": 150,
+      "flow": 45
+    },
+    {
+      "segmentId": "GL-A-005",
+      "sampleTime": "2025-01-15",
+      "conductivity": 145,
+      "flow": 42
+    },
+    {
+      "segmentId": "GL-A-005",
+      "sampleTime": "2025-01-25",
+      "conductivity": 160,
+      "flow": 50
+    },
+    {
+      "segmentId": "GL-A-005",
+      "sampleTime": "2025-02-05",
+      "conductivity": 175,
+      "flow": 58
+    },
+    {
+      "segmentId": "GL-A-005",
+      "sampleTime": "2025-02-15",
+      "conductivity": 190,
+      "flow": 66
+    },
+    {
+      "segmentId": "GL-B-001",
+      "sampleTime": "2025-01-05",
+      "conductivity": 200,
+      "flow": 60
+    },
+    {
+      "segmentId": "GL-B-001",
+      "sampleTime": "2025-01-15",
+      "conductivity": 230,
+      "flow": 72
+    },
+    {
+      "segmentId": "GL-B-001",
+      "sampleTime": "2025-01-25",
+      "conductivity": 265,
+      "flow": 88
+    },
+    {
+      "segmentId": "GL-B-001",
+      "sampleTime": "2025-02-05",
+      "conductivity": 300,
+      "flow": 105
+    },
+    {
+      "segmentId": "GL-B-001",
+      "sampleTime": "2025-02-15",
+      "conductivity": 285,
+      "flow": 95
+    },
+    {
+      "segmentId": "GL-B-002",
+      "sampleTime": "2025-01-05",
+      "conductivity": 110,
+      "flow": 33
+    },
+    {
+      "segmentId": "GL-B-002",
+      "sampleTime": "2025-01-15",
+      "conductivity": 115,
+      "flow": 35
+    },
+    {
+      "segmentId": "GL-B-002",
+      "sampleTime": "2025-01-25",
+      "conductivity": 108,
+      "flow": 32
+    },
+    {
+      "segmentId": "GL-B-002",
+      "sampleTime": "2025-02-05",
+      "conductivity": 120,
+      "flow": 38
+    },
+    {
+      "segmentId": "GL-B-002",
+      "sampleTime": "2025-02-15",
+      "conductivity": 130,
+      "flow": 43
+    },
+    {
+      "segmentId": "GL-B-003",
+      "sampleTime": "2025-01-05",
+      "conductivity": 160,
+      "flow": 48
+    },
+    {
+      "segmentId": "GL-B-003",
+      "sampleTime": "2025-01-15",
+      "conductivity": 175,
+      "flow": 55
+    },
+    {
+      "segmentId": "GL-B-003",
+      "sampleTime": "2025-01-25",
+      "conductivity": 190,
+      "flow": 62
+    },
+    {
+      "segmentId": "GL-B-003",
+      "sampleTime": "2025-02-05",
+      "conductivity": 210,
+      "flow": 72
+    },
+    {
+      "segmentId": "GL-B-003",
+      "sampleTime": "2025-02-15",
+      "conductivity": 225,
+      "flow": 80
+    },
+    {
+      "segmentId": "GL-B-004",
+      "sampleTime": "2025-01-05",
+      "conductivity": 90,
+      "flow": 27
+    },
+    {
+      "segmentId": "GL-B-004",
+      "sampleTime": "2025-01-15",
+      "conductivity": 92,
+      "flow": 28
+    },
+    {
+      "segmentId": "GL-B-004",
+      "sampleTime": "2025-01-25",
+      "conductivity": 88,
+      "flow": 26
+    },
+    {
+      "segmentId": "GL-B-004",
+      "sampleTime": "2025-02-05",
+      "conductivity": 95,
+      "flow": 29
+    },
+    {
+      "segmentId": "GL-B-004",
+      "sampleTime": "2025-02-15",
+      "conductivity": 98,
+      "flow": 31
+    },
+    {
+      "segmentId": "GL-C-001",
+      "sampleTime": "2025-01-05",
+      "conductivity": 140,
+      "flow": 42
+    },
+    {
+      "segmentId": "GL-C-001",
+      "sampleTime": "2025-01-15",
+      "conductivity": 155,
+      "flow": 48
+    },
+    {
+      "segmentId": "GL-C-001",
+      "sampleTime": "2025-01-25",
+      "conductivity": 148,
+      "flow": 45
+    },
+    {
+      "segmentId": "GL-C-001",
+      "sampleTime": "2025-02-05",
+      "conductivity": 162,
+      "flow": 52
+    },
+    {
+      "segmentId": "GL-C-001",
+      "sampleTime": "2025-02-15",
+      "conductivity": 170,
+      "flow": 56
+    },
+    {
+      "segmentId": "GL-C-002",
+      "sampleTime": "2025-01-05",
+      "conductivity": 105,
+      "flow": 32
+    },
+    {
+      "segmentId": "GL-C-002",
+      "sampleTime": "2025-01-15",
+      "conductivity": 112,
+      "flow": 35
+    },
+    {
+      "segmentId": "GL-C-002",
+      "sampleTime": "2025-01-25",
+      "conductivity": 120,
+      "flow": 39
+    },
+    {
+      "segmentId": "GL-C-002",
+      "sampleTime": "2025-02-05",
+      "conductivity": 128,
+      "flow": 43
+    },
+    {
+      "segmentId": "GL-C-002",
+      "sampleTime": "2025-02-15",
+      "conductivity": 135,
+      "flow": 47
+    },
+    {
+      "segmentId": "GL-C-003",
+      "sampleTime": "2025-01-05",
+      "conductivity": 75,
+      "flow": 22
+    },
+    {
+      "segmentId": "GL-C-003",
+      "sampleTime": "2025-01-15",
+      "conductivity": 78,
+      "flow": 23
+    },
+    {
+      "segmentId": "GL-C-003",
+      "sampleTime": "2025-01-25",
+      "conductivity": 82,
+      "flow": 25
+    },
+    {
+      "segmentId": "GL-C-003",
+      "sampleTime": "2025-02-05",
+      "conductivity": 80,
+      "flow": 24
+    },
+    {
+      "segmentId": "GL-C-003",
+      "sampleTime": "2025-02-15",
+      "conductivity": 85,
+      "flow": 26
+    }
+  ],
+  "initialized": true
+}
