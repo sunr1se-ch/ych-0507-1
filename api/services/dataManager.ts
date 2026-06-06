@@ -97,7 +97,11 @@ export const filterSamplesByDate = (
   return samples.filter(s => {
     const t = new Date(s.sampleTime).getTime();
     if (startDate && t < new Date(startDate).getTime()) return false;
-    if (endDate && t >= new Date(endDate).getTime()) return false;
+    if (endDate) {
+      const endOfDay = new Date(endDate);
+      endOfDay.setHours(23, 59, 59, 999);
+      if (t > endOfDay.getTime()) return false;
+    }
     return true;
   });
 };

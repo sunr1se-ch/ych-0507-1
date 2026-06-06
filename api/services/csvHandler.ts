@@ -56,7 +56,7 @@ export const generateAnalysisCsv = (
   ].join(',');
 
   const rows = segments.map(seg => {
-    const contrast = seg.neighborAvgIntensity - seg.avgLeakageIntensity;
+    const contrast = seg.avgLeakageIntensity - seg.neighborAvgIntensity;
     return [
       seg.segmentId,
       seg.corridor,

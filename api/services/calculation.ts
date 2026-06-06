@@ -73,7 +73,9 @@ export const calculateAdjacentSegments = (
   }
 
   for (const [, corridorSegments] of segmentsByCorridor) {
-    const sorted = [...corridorSegments].sort((a, b) => a.length - b.length);
+    const sorted = [...corridorSegments].sort((a, b) => 
+      a.upstreamNode.localeCompare(b.upstreamNode)
+    );
 
     for (let i = 0; i < sorted.length; i++) {
       const adj: string[] = [];
@@ -106,14 +108,9 @@ export const calculateNeighborAvgIntensity = (
 
 export const analyzeSegments = (
   segments: PipeSegment[],
-  samples: LeakSample[],
-  baselineSamples?: LeakSample[]
+  samples: LeakSample[]
 ): SegmentLeakage[] => {
   const intensityMap = calculateLeakageIntensity(samples, segments);
-  const neighborIntensityMap = calculateLeakageIntensity(
-    baselineSamples ?? samples,
-    segments
-  );
   const adjMap = calculateAdjacentSegments(segments);
 
   return segments.map(seg => {
@@ -122,7 +119,7 @@ export const analyzeSegments = (
     const neighborAvg = calculateNeighborAvgIntensity(
       seg.segmentId,
       adjacent,
-      neighborIntensityMap
+      intensityMap
     );
 
     const segSamples = samples.filter(s => s.segmentId === seg.segmentId);

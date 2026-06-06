@@ -37,7 +37,7 @@ router.post('/analysis', (req: Request, res: Response) => {
   const filteredSegments = filterSegmentsByCorridor(allSegments, filter.corridors);
   const filteredSamples = filterSamplesByDate(allSamples, filter.startDate, filter.endDate);
 
-  const analyzed = analyzeSegments(filteredSegments, filteredSamples, allSamples);
+  const analyzed = analyzeSegments(filteredSegments, filteredSamples);
   
   const intensities = analyzed.map(s => s.avgLeakageIntensity);
   const maxIdx = intensities.indexOf(Math.max(...intensities));
@@ -71,13 +71,14 @@ router.get('/export', (req: Request, res: Response) => {
   const allSamples = getSamples();
   const filteredSegments = filterSegmentsByCorridor(allSegments, corridors);
   const filteredSamples = filterSamplesByDate(allSamples, startDate, endDate);
-  const analyzed = analyzeSegments(filteredSegments, filteredSamples, allSamples);
+  const analyzed = analyzeSegments(filteredSegments, filteredSamples);
 
   const csv = generateAnalysisCsv(analyzed, filter);
   const filename = `渗漏分析_${new Date().toISOString().slice(0, 10)}.csv`;
+  const encodedFilename = encodeURIComponent(filename);
   
   res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-  res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+  res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodedFilename}`);
   res.send('\uFEFF' + csv);
 });
 
@@ -100,8 +101,10 @@ router.post('/import', upload.single('file'), (req: Request, res: Response) => {
 
 router.get('/sample-template', (_req: Request, res: Response) => {
   const csv = generateSamplesCsv();
+  const filename = '采样数据导入模板.csv';
+  const encodedFilename = encodeURIComponent(filename);
   res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-  res.setHeader('Content-Disposition', 'attachment; filename="采样数据导入模板.csv"');
+  res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodedFilename}`);
   res.send('\uFEFF' + csv);
 });
 
