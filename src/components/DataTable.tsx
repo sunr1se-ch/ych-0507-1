@@ -1,7 +1,8 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { ArrowUpDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import type { SegmentLeakage } from '../types';
 import { formatNumber, getIntensityColor, getIntensityLevel } from '../utils/format';
+import { useDashboardStore } from '../store/useDashboardStore';
 
 interface DataTableProps {
   data: SegmentLeakage[];
@@ -16,6 +17,9 @@ export function DataTable({ data, maxIntensity }: DataTableProps) {
   const [sortDir, setSortDir] = useState<SortDirection>('desc');
   const [page, setPage] = useState(0);
   const pageSize = 6;
+  const tableBodyRef = useRef<HTMLDivElement>(null);
+  const rowRefs = useRef<Map<string, HTMLTableRowElement>>(new Map());
+  const { focusedSegmentId, setFocusedSegment } = useDashboardStore();
 
   const sortedData = useMemo(() => {
     return [...data].sort((a, b) => {
@@ -44,6 +48,31 @@ export function DataTable({ data, maxIntensity }: DataTableProps) {
   const totalPages = Math.max(1, Math.ceil(sortedData.length / pageSize));
   const pageData = sortedData.slice(page * pageSize, (page + 1) * pageSize);
 
+  useEffect(() => {
+    if (!focusedSegmentId) return;
+
+    const index = sortedData.findIndex(s => s.segmentId === focusedSegmentId);
+    if (index === -1) return;
+
+    const targetPage = Math.floor(index / pageSize);
+    if (targetPage !== page) {
+      setPage(targetPage);
+    }
+  }, [focusedSegmentId, sortedData, page, pageSize]);
+
+  useEffect(() => {
+    if (!focusedSegmentId || !tableBodyRef.current) return;
+
+    const timer = setTimeout(() => {
+      const row = rowRefs.current.get(focusedSegmentId);
+      if (row) {
+        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [focusedSegmentId, page]);
+
   const handleSort = (key: SortKey) => {
     if (sortKey === key) {
       setSortDir(sortDir === 'asc' ? 'desc' : 'asc');
@@ -52,6 +81,18 @@ export function DataTable({ data, maxIntensity }: DataTableProps) {
       setSortDir('desc');
     }
   };
+
+  const handleRowClick = useCallback((seg: SegmentLeakage) => {
+    setFocusedSegment(seg.segmentId);
+  }, [setFocusedSegment]);
+
+  const setRowRef = useCallback((segmentId: string, el: HTMLTableRowElement | null) => {
+    if (el) {
+      rowRefs.current.set(segmentId, el);
+    } else {
+      rowRefs.current.delete(segmentId);
+    }
+  }, []);
 
   const SortIcon = ({ active, direction }: { active: boolean; direction: SortDirection }) => (
     <ArrowUpDown
@@ -64,7 +105,7 @@ export function DataTable({ data, maxIntensity }: DataTableProps) {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex-1 overflow-auto">
+      <div ref={tableBodyRef} className="flex-1 overflow-auto">
         <table className="w-full text-sm">
           <thead className="sticky top-0 z-10 bg-zinc-900/95 backdrop-blur">
             <tr className="border-b border-zinc-800">
@@ -123,41 +164,53 @@ export function DataTable({ data, maxIntensity }: DataTableProps) {
               const color = getIntensityColor(seg.avgLeakageIntensity, maxIntensity);
               const level = getIntensityLevel(seg.avgLeakageIntensity, maxIntensity);
               const contrast = seg.avgLeakageIntensity - seg.neighborAvgIntensity;
-              
+              const isFocused = seg.segmentId === focusedSegmentId;
+              const dimmed = focusedSegmentId && !isFocused;
+
               return (
                 <tr
                   key={seg.segmentId}
-                  className="transition-colors hover:bg-zinc-800/30"
+                  ref={(el) => setRowRef(seg.segmentId, el)}
+                  onClick={() => handleRowClick(seg)}
+                  className={`cursor-pointer transition-all duration-200 ${
+                    isFocused
+                      ? 'bg-amber-500/15 border-l-2 border-l-amber-400'
+                      : (dimmed ? 'opacity-40' : 'hover:bg-zinc-800/30')
+                  }`}
                   style={{
                     animation: `fadeIn 0.4s ease-out ${idx * 50}ms both`,
                   }}
                 >
-                  <td className="px-3 py-2.5 font-mono text-xs text-zinc-200">{seg.segmentId}</td>
-                  <td className="px-3 py-2.5 text-xs text-zinc-400">{seg.corridor}</td>
+                  <td className={`px-3 py-2.5 font-mono text-xs ${isFocused ? 'text-amber-300 font-bold' : 'text-zinc-200'}`}>
+                    {seg.segmentId}
+                  </td>
+                  <td className={`px-3 py-2.5 text-xs ${isFocused ? 'text-amber-200' : 'text-zinc-400'}`}>
+                    {seg.corridor}
+                  </td>
                   <td className="px-3 py-2.5 text-right">
                     <span
                       className="font-mono text-xs font-semibold"
-                      style={{ color }}
+                      style={{ color: isFocused ? '#fbbf24' : color }}
                     >
                       {formatNumber(seg.avgLeakageIntensity)}
                     </span>
                   </td>
-                  <td className="px-3 py-2.5 text-right font-mono text-xs text-zinc-500">
+                  <td className={`px-3 py-2.5 text-right font-mono text-xs ${isFocused ? 'text-amber-200' : 'text-zinc-500'}`}>
                     {formatNumber(seg.neighborAvgIntensity)}
                   </td>
                   <td className="px-3 py-2.5 text-center">
                     <span
                       className="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium"
                       style={{
-                        backgroundColor: `${color}20`,
-                        color,
-                        border: `1px solid ${color}40`,
+                        backgroundColor: isFocused ? 'rgba(251, 191, 36, 0.15)' : `${color}20`,
+                        color: isFocused ? '#fbbf24' : color,
+                        border: `1px solid ${isFocused ? 'rgba(251, 191, 36, 0.4)' : `${color}40`}`,
                       }}
                     >
                       {level}
                     </span>
                   </td>
-                  <td className="px-3 py-2.5 text-center font-mono text-xs text-zinc-500">
+                  <td className={`px-3 py-2.5 text-center font-mono text-xs ${isFocused ? 'text-amber-200' : 'text-zinc-500'}`}>
                     {seg.sampleCount}
                   </td>
                 </tr>

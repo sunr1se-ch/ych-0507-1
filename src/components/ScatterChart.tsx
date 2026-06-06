@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import * as echarts from 'echarts';
 import type { SegmentLeakage } from '../types';
+import { useDashboardStore } from '../store/useDashboardStore';
 
 interface ScatterChartProps {
   data: SegmentLeakage[];
@@ -10,20 +11,64 @@ interface ScatterChartProps {
 export function ScatterChart({ data, maxIntensity }: ScatterChartProps) {
   const chartRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<echarts.ECharts | null>(null);
+  const { focusedSegmentId, setFocusedSegment } = useDashboardStore();
 
   useEffect(() => {
     if (!chartRef.current) return;
 
     if (!chartInstance.current) {
       chartInstance.current = echarts.init(chartRef.current, 'dark');
+
+      chartInstance.current.on('click', (params: unknown) => {
+        const p = params as { value: string[] };
+        if (p.value && p.value[2]) {
+          setFocusedSegment(p.value[2]);
+        }
+      });
     }
 
-    const scatterData = data.map(s => [
-      s.neighborAvgIntensity,
-      s.avgLeakageIntensity,
-      s.segmentId,
-      s.corridor,
-    ]);
+    const scatterData = data.map((s, idx) => {
+      const isFocused = s.segmentId === focusedSegmentId;
+      const dimmed = focusedSegmentId && !isFocused;
+      const item = {
+        value: [
+          s.neighborAvgIntensity,
+          s.avgLeakageIntensity,
+          s.segmentId,
+          s.corridor,
+        ] as [number, number, string, string],
+      } as echarts.SeriesOption['data'];
+      if (isFocused) {
+        Object.assign(item, {
+          symbolSize: 22,
+          itemStyle: {
+            color: '#fbbf24',
+            borderColor: '#fef3c7',
+            borderWidth: 3,
+            shadowBlur: 20,
+            shadowColor: 'rgba(251, 191, 36, 0.8)',
+            opacity: 1,
+          },
+          label: {
+            show: true,
+            fontWeight: 700,
+            color: '#fbbf24',
+          },
+        });
+      } else if (dimmed) {
+        Object.assign(item, {
+          symbolSize: 10,
+          itemStyle: {
+            opacity: 0.25,
+          },
+          label: {
+            show: true,
+            color: '#475569',
+          },
+        });
+      }
+      return item;
+    });
 
     const maxVal = Math.max(maxIntensity, 1);
 
@@ -152,7 +197,7 @@ export function ScatterChart({ data, maxIntensity }: ScatterChartProps) {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [data, maxIntensity]);
+  }, [data, maxIntensity, focusedSegmentId, setFocusedSegment]);
 
   return (
     <div className="h-full w-full">

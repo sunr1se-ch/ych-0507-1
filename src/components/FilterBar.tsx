@@ -1,5 +1,5 @@
 import { useDashboardStore } from '../store/useDashboardStore';
-import { Filter, RotateCcw, Download, Upload, FileDown } from 'lucide-react';
+import { Filter, RotateCcw, Download, Upload, FileDown, X, Target } from 'lucide-react';
 
 interface FilterBarProps {
   onImport: () => void;
@@ -7,7 +7,7 @@ interface FilterBarProps {
 }
 
 export function FilterBar({ onImport, onExport }: FilterBarProps) {
-  const { corridors, filter, setFilter, resetFilter, loadAnalysis } = useDashboardStore();
+  const { corridors, filter, setFilter, resetFilter, loadAnalysis, focusedSegmentId, clearFocus } = useDashboardStore();
 
   const toggleCorridor = (corridor: string) => {
     const current = filter.corridors;
@@ -67,6 +67,24 @@ export function FilterBar({ onImport, onExport }: FilterBarProps) {
             className="rounded-md border border-zinc-700 bg-zinc-800/50 px-3 py-1.5 text-xs text-zinc-200 focus:border-sky-500 focus:outline-none"
           />
         </div>
+
+        {focusedSegmentId && (
+          <>
+            <div className="h-6 w-px bg-zinc-700/50" />
+            <div className="flex items-center gap-2 rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-1.5">
+              <Target size={14} className="text-amber-400" />
+              <span className="text-xs text-zinc-400">已聚焦：</span>
+              <span className="font-mono text-xs font-semibold text-amber-300">{focusedSegmentId}</span>
+              <button
+                onClick={clearFocus}
+                className="ml-1 rounded p-0.5 text-zinc-500 transition-colors hover:bg-zinc-700/50 hover:text-zinc-300"
+                title="清除聚焦"
+              >
+                <X size={12} />
+              </button>
+            </div>
+          </>
+        )}
 
         <div className="ml-auto flex items-center gap-2">
           <button

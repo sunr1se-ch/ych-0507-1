@@ -1,6 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import * as echarts from 'echarts';
 import type { SegmentLeakage } from '../types';
+import { useDashboardStore } from '../store/useDashboardStore';
 
 interface BarChartProps {
   data: SegmentLeakage[];
@@ -10,18 +11,48 @@ interface BarChartProps {
 export function BarChart({ data, maxIntensity }: BarChartProps) {
   const chartRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<echarts.ECharts | null>(null);
+  const { focusedSegmentId, setFocusedSegment } = useDashboardStore();
+
+  const sorted = useCallback(() => {
+    return [...data].sort((a, b) => b.avgLeakageIntensity - a.avgLeakageIntensity);
+  }, [data])();
+
+  const focusedIndex = sorted.findIndex(s => s.segmentId === focusedSegmentId);
 
   useEffect(() => {
     if (!chartRef.current) return;
 
     if (!chartInstance.current) {
       chartInstance.current = echarts.init(chartRef.current, 'dark');
+
+      chartInstance.current.on('click', (params: unknown) => {
+        const p = params as { name: string };
+        if (p.name) {
+          setFocusedSegment(p.name);
+        }
+      });
     }
 
-    const sorted = [...data].sort((a, b) => b.avgLeakageIntensity - a.avgLeakageIntensity);
     const segmentIds = sorted.map(s => s.segmentId);
-    const intensities = sorted.map(s => s.avgLeakageIntensity);
-    const neighborIntensities = sorted.map(s => s.neighborAvgIntensity);
+    const intensities = sorted.map((s, idx) => ({
+      value: s.avgLeakageIntensity,
+      itemStyle: focusedSegmentId
+        ? (idx === focusedIndex
+            ? {
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                  { offset: 0, color: '#fbbf24' },
+                  { offset: 1, color: '#f59e0b' },
+                ]),
+                shadowBlur: 15,
+                shadowColor: 'rgba(251, 191, 36, 0.6)',
+              }
+            : { opacity: 0.25 })
+        : undefined,
+    }));
+    const neighborIntensities = sorted.map((s, idx) => ({
+      value: s.neighborAvgIntensity,
+      itemStyle: focusedSegmentId && idx !== focusedIndex ? { opacity: 0.25 } : undefined,
+    }));
 
     const option: echarts.EChartsOption = {
       backgroundColor: 'transparent',
@@ -61,10 +92,19 @@ export function BarChart({ data, maxIntensity }: BarChartProps) {
         type: 'category',
         data: segmentIds,
         axisLabel: {
-          color: '#64748b',
+          color: (value: string | number, index: number) => {
+            const id = segmentIds[index];
+            return focusedSegmentId
+              ? (id === focusedSegmentId ? '#fbbf24' : '#475569')
+              : '#64748b';
+          },
           fontSize: 10,
           rotate: 35,
           fontFamily: 'JetBrains Mono, monospace',
+          fontWeight: (value: string | number, index: number) => {
+            const id = segmentIds[index];
+            return (focusedSegmentId && id === focusedSegmentId) ? 'bold' : 'normal';
+          },
         },
         axisLine: { lineStyle: { color: '#334155' } },
         axisTick: { show: false },
@@ -128,7 +168,7 @@ export function BarChart({ data, maxIntensity }: BarChartProps) {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [data, maxIntensity]);
+  }, [data, maxIntensity, focusedSegmentId, focusedIndex, sorted, setFocusedSegment]);
 
   return (
     <div className="h-full w-full">

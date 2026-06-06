@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import type { SegmentLeakage } from '../types';
 import { getIntensityColor, getIntensityLevel } from '../utils/format';
+import { useDashboardStore } from '../store/useDashboardStore';
 
 interface TopologyChartProps {
   data: SegmentLeakage[];
@@ -15,6 +16,13 @@ interface HoveredSegment {
 
 export function TopologyChart({ data, maxIntensity }: TopologyChartProps) {
   const [hovered, setHovered] = useState<HoveredSegment | null>(null);
+  const { focusedSegmentId, setFocusedSegment } = useDashboardStore();
+
+  const { adjacentSegmentIds, focusedSegment } = useMemo(() => {
+    const focused = data.find(s => s.segmentId === focusedSegmentId);
+    const adjacents = new Set(focused?.adjacentSegments || []);
+    return { adjacentSegmentIds: adjacents, focusedSegment: focused };
+  }, [data, focusedSegmentId]);
 
   const corridors = useMemo(() => {
     const map = new Map<string, SegmentLeakage[]>();
@@ -35,6 +43,10 @@ export function TopologyChart({ data, maxIntensity }: TopologyChartProps) {
   const paddingTop = 50;
   const paddingBottom = 30;
   const height = corridors.length * rowHeight + paddingTop + paddingBottom;
+
+  const handleClick = useCallback((seg: SegmentLeakage) => {
+    setFocusedSegment(seg.segmentId);
+  }, [setFocusedSegment]);
 
   const renderCorridor = (
     corridorName: string,
@@ -75,6 +87,36 @@ export function TopologyChart({ data, maxIntensity }: TopologyChartProps) {
           const level = getIntensityLevel(seg.avgLeakageIntensity, maxIntensity);
           const intensityNorm = maxIntensity > 0 ? (seg.avgLeakageIntensity / maxIntensity) * 100 : 0;
 
+          const isFocused = seg.segmentId === focusedSegmentId;
+          const isAdjacent = adjacentSegmentIds.has(seg.segmentId);
+          const dimmed = focusedSegmentId && !isFocused && !isAdjacent;
+
+          let rectOpacity = 0.85;
+          let rectStroke: string | undefined = undefined;
+          let rectStrokeWidth = 0;
+          let textColor = seg.avgLeakageIntensity > maxIntensity * 0.5 ? '#ffffff' : '#cbd5e1';
+          let filterStyle = `drop-shadow(0 0 ${intensityNorm / 15}px ${color})`;
+          let strokeDasharray: string | undefined = undefined;
+
+          if (isFocused) {
+            rectOpacity = 1;
+            rectStroke = '#fbbf24';
+            rectStrokeWidth = 2.5;
+            textColor = '#ffffff';
+            filterStyle = `drop-shadow(0 0 12px #fbbf24)`;
+          } else if (isAdjacent) {
+            rectOpacity = 0.9;
+            rectStroke = '#60a5fa';
+            rectStrokeWidth = 2;
+            strokeDasharray = '4,2';
+            textColor = '#ffffff';
+            filterStyle = `drop-shadow(0 0 6px #60a5fa)`;
+          } else if (dimmed) {
+            rectOpacity = 0.25;
+            textColor = '#475569';
+            filterStyle = 'none';
+          }
+
           return (
             <g key={seg.segmentId}>
               <rect
@@ -84,8 +126,12 @@ export function TopologyChart({ data, maxIntensity }: TopologyChartProps) {
                 height={16}
                 rx={4}
                 fill={color}
-                opacity={0.85}
+                opacity={rectOpacity}
+                stroke={rectStroke}
+                strokeWidth={rectStrokeWidth}
+                strokeDasharray={strokeDasharray}
                 className="cursor-pointer transition-all duration-200"
+                onClick={() => handleClick(seg)}
                 onMouseEnter={(e) => setHovered({
                   segment: seg,
                   x: e.clientX,
@@ -93,16 +139,17 @@ export function TopologyChart({ data, maxIntensity }: TopologyChartProps) {
                 })}
                 onMouseMove={(e) => setHovered((prev) => prev ? { ...prev, x: e.clientX, y: e.clientY } : null)}
                 onMouseLeave={() => setHovered(null)}
-                style={{ filter: `drop-shadow(0 0 ${intensityNorm / 15}px ${color})` }}
+                style={{ filter: filterStyle }}
               />
               <text
                 x={(xStart + xEnd) / 2}
                 y={y + 4}
                 textAnchor="middle"
-                fill={seg.avgLeakageIntensity > maxIntensity * 0.5 ? '#ffffff' : '#cbd5e1'}
+                fill={textColor}
                 fontSize="9"
                 fontFamily="JetBrains Mono, monospace"
                 className="pointer-events-none select-none"
+                style={{ fontWeight: isFocused ? 700 : isAdjacent ? 600 : 400 }}
               >
                 {seg.segmentId.slice(-3)}
               </text>
@@ -112,12 +159,22 @@ export function TopologyChart({ data, maxIntensity }: TopologyChartProps) {
                   cy={y}
                   r={5}
                   fill="#0ea5e9"
-                  className="pointer-events-none"
+                  opacity={dimmed ? 0.3 : 1}
+                  className="pointer-events-none transition-opacity duration-200"
                 />
               )}
               {idx === 0 && (
                 <>
-                  <circle cx={xStart - 5} cy={y} r={6} fill="#f97316" stroke="#fff" strokeWidth="1.5" />
+                  <circle 
+                    cx={xStart - 5} 
+                    cy={y} 
+                    r={6} 
+                    fill="#f97316" 
+                    stroke="#fff" 
+                    strokeWidth="1.5"
+                    opacity={dimmed ? 0.3 : 1}
+                    className="transition-opacity duration-200"
+                  />
                   <text
                     x={xStart - 5}
                     y={y - 18}
@@ -125,7 +182,8 @@ export function TopologyChart({ data, maxIntensity }: TopologyChartProps) {
                     fill="#f97316"
                     fontSize="9"
                     fontFamily="JetBrains Mono, monospace"
-                    className="select-none"
+                    className="select-none transition-opacity duration-200"
+                    opacity={dimmed ? 0.3 : 1}
                   >
                     {seg.upstreamNode}
                   </text>
@@ -144,6 +202,8 @@ export function TopologyChart({ data, maxIntensity }: TopologyChartProps) {
               fill="#22c55e"
               stroke="#fff"
               strokeWidth="1.5"
+              opacity={focusedSegmentId ? 0.3 : 1}
+              className="transition-opacity duration-200"
             />
             <text
               x={80 + segments.length * segWidth - 10}
@@ -152,7 +212,8 @@ export function TopologyChart({ data, maxIntensity }: TopologyChartProps) {
               fill="#22c55e"
               fontSize="9"
               fontFamily="JetBrains Mono, monospace"
-              className="select-none"
+              className="select-none transition-opacity duration-200"
+              opacity={focusedSegmentId ? 0.3 : 1}
             >
               {segments[segments.length - 1].upstreamNode.replace(/\d$/, (m) => String(parseInt(m) + 1))}
             </text>
@@ -192,6 +253,19 @@ export function TopologyChart({ data, maxIntensity }: TopologyChartProps) {
           })}
         </g>
       </svg>
+
+      {focusedSegmentId && (
+        <div className="absolute right-4 top-4 flex items-center gap-3 text-[11px] text-zinc-500">
+          <div className="flex items-center gap-1.5">
+            <span className="inline-block h-3 w-3 rounded-sm border-2 border-amber-400 bg-amber-400/30" />
+            <span>当前聚焦</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="inline-block h-3 w-3 rounded-sm border-2 border-blue-400 border-dashed bg-blue-400/20" />
+            <span>物理邻段</span>
+          </div>
+        </div>
+      )}
 
       {hovered && (
         <div
